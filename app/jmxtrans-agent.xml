@@ -1,0 +1,39 @@
+<jmxtrans-agent>
+    <queries>
+        <!-- JVM -->
+        <query objectName="java.lang:type=Memory" attribute="HeapMemoryUsage" key="used"
+               resultAlias="jvm.Memory.HeapMemoryUsage.used"/>
+        <query objectName="java.lang:type=Memory" attribute="HeapMemoryUsage" key="committed"
+               resultAlias="jvm.Memory.HeapMemoryUsage.committed"/>
+        <query objectName="java.lang:type=Memory" attribute="NonHeapMemoryUsage" key="used"
+               resultAlias="jvm.Memory.NonHeapMemoryUsage.used"/>
+        <query objectName="java.lang:type=Memory" attribute="NonHeapMemoryUsage" key="committed"
+               resultAlias="jvm.Memory.NonHeapMemoryUsage.committed"/>
+        
+        <query objectName="java.lang:type=ClassLoading" attribute="LoadedClassCount"
+               resultAlias="jvm.ClassLoading.LoadedClassCount"/>
+
+        <query objectName="java.lang:type=Threading" 
+               attributes="ThreadCount,DaemonThreadCount,PeakThreadCount,TotalStartedThreadCount" 
+               resultAlias="jvm.Threading.#attribute#"/>
+
+        <!-- TOMCAT -->
+        <query objectName="Catalina:type=GlobalRequestProcessor,name=*" 
+               attributes="requestCount,errorCount,processingTime,bytesSent,bytesReceived"
+               resultAlias="tomcat.GlobalRequestProcessor.#attribute#"/>
+
+        <query objectName="Catalina:type=ThreadPool,name=*" 
+               attributes="maxConnections,maxThreads,minSpareThreads,maxKeepAliveRequests,currentThreadCount,currentThreadsBusy"
+               resultAlias="tomcat.ThreadPool.#attribute#"/>
+
+    </queries>
+    <outputWriter class="org.jmxtrans.agent.influxdb.InfluxDbOutputWriter">
+        <url>http://influxdb:8086</url>
+        <database>test</database>
+        <user>root</user>
+        <password>root</password>
+        <tags>application=jmx,host=#hostname#</tags>
+    </outputWriter>
+    <outputWriter class="org.jmxtrans.agent.ConsoleOutputWriter"/>
+    <collectIntervalInSeconds>5</collectIntervalInSeconds>
+</jmxtrans-agent>

@@ -1,0 +1,30 @@
+influxdb:
+  image: influxdb
+  environment:
+    - INFLUXDB_ADMIN_USER=root
+    - INFLUXDB_ADMIN_PASSWORD=root
+    - INFLUXDB_ADMIN_ENABLED=true
+    - INFLUXDB_DB=test
+    - INFLUXDB_USER=test
+    - INFLUXDB_USER_PASSWORD=test
+  ports:
+    - '8086:8086'
+    - '8083:8083'
+
+grafana:
+  image: grafana/grafana
+  ports:
+    - '3000:3000'
+  links:
+    - influxdb
+
+app:
+  build: ./app
+  environment:
+    INFLUX_DBURL: http://influxdb:8086/
+    INFLUX_DBNAME: test
+    INFLUX_DBUSER: root
+    INFLUX_DBPWD: root
+    JAVA_OPTS: '$JAVA_OPTS -javaagent:/jmxtrans-agent-1.2.6.jar=/jmxtrans-agent.xml'
+  links:
+    - influxdb
