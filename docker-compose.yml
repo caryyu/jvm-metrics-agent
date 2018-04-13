@@ -21,10 +21,6 @@ grafana:
 app:
   build: ./app
   environment:
-    INFLUX_DBURL: http://influxdb:8086/
-    INFLUX_DBNAME: test
-    INFLUX_DBUSER: root
-    INFLUX_DBPWD: root
     JAVA_OPTS: '$JAVA_OPTS -javaagent:/jmxtrans-agent-1.2.6.jar=/jmxtrans-agent.xml'
   links:
     - influxdb
